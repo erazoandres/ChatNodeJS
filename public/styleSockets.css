@@ -1,0 +1,43 @@
+#chat_container{
+    width: 70%;
+    height: 90vh;
+    padding: 10px;
+    margin: 10px;
+    background-color: antiquewhite;
+
+}
+
+#messages_container{
+    height: 80%;
+    width: 90%;
+    background-color:aliceblue;
+    display: flex;
+    flex-direction: column;
+
+    
+}
+
+.messages_container_user {
+    background-color:rgb(127, 250, 148);
+    align-self: flex-end;
+    
+}
+
+.messages_container_otherUser {
+    background-color:rgb(91, 112, 230);
+    align-self: flex-start;
+}
+
+
+
+#controls{
+    padding: 20px;
+}
+
+#controls input{
+    width: 80%;
+}
+
+#controls input , button{
+    padding: 5px;
+}

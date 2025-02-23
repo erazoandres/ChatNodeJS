@@ -1,94 +1,149 @@
-const express = require('express');
+const express = require('express') ; 
+const path =require('path');
 const app = express();
+const PORT  = 3000 ; 
+
 app.use(express.json());
-const PORT = 3000 ; 
 
+app.use(express.static(path.join(__dirname,'public')));
 
-const usuarios = [
-    {"nombre": "Elon Musk", "ocupación": "Empresario", "nacionalidad": "Sudafricano/Estadounidense", "dato_destacado": "Fundador de SpaceX y Tesla"},
-    {"nombre": "Lionel Messi", "ocupación": "Futbolista", "nacionalidad": "Argentino", "dato_destacado": "Ganador de 8 Balón de Oro"},
-    {"nombre": "Cristiano Ronaldo", "ocupación": "Futbolista", "nacionalidad": "Portugués", "dato_destacado": "Máximo goleador de la Champions League"},
-    {"nombre": "Bill Gates", "ocupación": "Empresario", "nacionalidad": "Estadounidense", "dato_destacado": "Fundador de Microsoft y filántropo"},
-    {"nombre": "Jeff Bezos", "ocupación": "Empresario", "nacionalidad": "Estadounidense", "dato_destacado": "Fundador de Amazon"},
-    {"nombre": "Albert Einstein", "ocupación": "Científico", "nacionalidad": "Alemán", "dato_destacado": "Teoría de la relatividad"},
-    {"nombre": "Leonardo da Vinci", "ocupación": "Artista/Científico", "nacionalidad": "Italiano", "dato_destacado": "Pintor de la Mona Lisa"},
-    {"nombre": "Marie Curie", "ocupación": "Científica", "nacionalidad": "Polaca", "dato_destacado": "Descubridora del radio y polonio"},
-    {"nombre": "Barack Obama", "ocupación": "Político", "nacionalidad": "Estadounidense", "dato_destacado": "Primer presidente afroamericano de EE.UU."},
-    {"nombre": "Stephen Hawking", "ocupación": "Científico", "nacionalidad": "Británico", "dato_destacado": "Aportaciones a la cosmología y los agujeros negros"}
+const database_pokemons = [
+    {
+        nombre: "Pikachu",
+        tipo: "Eléctrico",
+        nivel: 25,
+        habilidades: ["Impactrueno", "Rayo", "Ataque rápido"],
+        evolucion: "Raichu"
+    },
+    {
+        nombre: "Charmander",
+        tipo: "Fuego",
+        nivel: 12,
+        habilidades: ["Ascuas", "Garra dragón", "Lanzallamas"],
+        evolucion: "Charmeleon"
+    },
+    {
+        nombre: "Bulbasaur",
+        tipo: "Planta/Veneno",
+        nivel: 16,
+        habilidades: ["Latigazo", "Drenadoras", "Rayo solar"],
+        evolucion: "Ivysaur"
+    },
+    {
+        nombre: "Squirtle",
+        tipo: "Agua",
+        nivel: 14,
+        habilidades: ["Pistola agua", "Hidrobomba", "Refugio"],
+        evolucion: "Wartortle"
+    },
+    {
+        nombre: "Gengar",
+        tipo: "Fantasma/Veneno",
+        nivel: 50,
+        habilidades: ["Bola sombra", "Lengüetazo", "Hipnosis"],
+        evolucion: "Mega Gengar"
+    },
+    {
+        nombre: "Eevee",
+        tipo: "Normal",
+        nivel: 20,
+        habilidades: ["Ataque rápido", "Doble equipo", "Mordisco"],
+        evolucion: ["Vaporeon", "Jolteon", "Flareon", "Espeon", "Umbreon", "Leafeon", "Glaceon", "Sylveon"]
+    }
 ]
 
-app.get('/' , (req , res) => {
-    res.send("Bienvenido a la super API")
+app.get('/',(req,res)=>{
+    res.send("Bienvenido a la API de Andrés Erazo");
 });
 
 app.listen(PORT , () => {
-    console.log(`Conectado como http://localhost:${PORT}`)
+    console.log("API funcionando, http://localhost:"+ PORT.toString()) ; 
+
 });
 
+app.get('/get_all' , (req, res) =>{
 
-app.get('/get_all' ,(req, res) => {
-    res.json(usuarios)
-});
-
-
-app.get('/get_user/:nombre', (req, res) => {
-    let user = null;
-    
-    for (let usuario of usuarios) {
-        if (usuario.nombre === req.params.nombre) {
-            user = usuario;
-            break; // Detiene el bucle cuando encuentra el usuario
-        }
+    if (database_pokemons.length >0 ) {
+        res.status(201).json(database_pokemons)
+    }else{
+        res.status(404).json({"error" : "Base de datos vacia"}) ; 
     }
     
-    if (user) {
-        res.json(user); // ✅ Envía el usuario encontrado como JSON
-    } else {
-        res.status(404).json({ msj: "Usuario no encontrado" });
-    }
 });
 
+app.post('/register' , (req,res)=>{
+    const nombre = req.body.nombre;
+    const tipo = req.body.tipo;
+    const nivel = req.body.nivel;
+    const habilidades = req.body.habilidades;
+    const evolucion = req.body.evolucion;
+    
 
-app.post("/register_user", (req, res) => {
+    
 
-    const {nombre , ocupacion , nacionalidad} = req.body;
-
-    const nuevo_usuario = {
-        nombre :nombre , 
-        ocupacion : ocupacion, 
-        nacionalidad : nacionalidad
+    const data_model = {
+        "nombre" : nombre,
+        "tipo" : tipo,
+        "nivel" : nivel, 
+        "habilidades" : habilidades, 
+        "evolucion" : evolucion
     } ; 
 
-    usuarios.push(nuevo_usuario);
-    res.status(201).json(nuevo_usuario);
+    database_pokemons.push(data_model) ; 
+
+    res.status(201).json(data_model) ; 
 
 });
 
+app.get('/get_user/:name' , (req, res)=> {
 
-app.put("/update/:nombre" , (req , res) => {
+    const name_search = req.params.name ; 
 
-    for(let user of usuarios){
-        if (user.nombre === req.body.nombre){
-            const tmp = {
-                nombre: req.body.nombre, 
-                ocupacion:  req.body.ocupacion, 
-                nacionalidad:  req.body.nacionalidad, 
-             }; 
+    console.log(name_search);
 
-             console.log("Si lo encontre");
-
-             usuario.nombre = tmp.nombre;
-             usuario.edad = tmp.ocupacion;
-             res.json(tmp);
-
-
-             break;
+    for (const user_index of database_pokemons) {
+        if (user_index.nombre === name_search){
             
-        }else{
-            res.status(404).json({"aviso:" :" No encontrado"});
+            res.status(200).json(user_index) ; 
+            break
+            
         }
+    }
+}); 
+
+app.put("/update_user/", (req, res)=>{
+
+    const {nombre  , tipo , nivel, habilidades , evolucion} = req.body ; 
+
+    for (const user_index of database_pokemons) {
+        if (user_index.nombre === nombre) {
+
+            user_index.nombre = nombre ;
+            user_index.tipo = tipo ;
+            user_index.nivel = nivel ;
+            user_index.habilidades = habilidades ;
+            user_index.evolucion = evolucion ;
+
+
+            res.status(200).json(user_index) ; 
+            break ; 
+        }
+    }
+}); 
 
 
 
-    };  
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+

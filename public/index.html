@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="styleSockets.css">
+</head>
+<body>
+
+    <div id = "chat_container">
+        <div id = "messages_container">
+            
+        </div>
+
+        <div id="controls">
+            <input type="text" id = "input_data">
+            <button onclick = "getData()">Enviar</button>
+        </div>
+    </div>
+
+
+    <script>
+
+        const nombresLatinos = [
+        "Juan Carlos",
+        "Mariana López",
+        "Sofía Ramírez",
+        "Luis Fernando Gómez",
+        "Valentina Herrera",
+        "Carlos Andrés Torres",
+        "Gabriela Martínez",
+        "José Manuel Ríos",
+        "Camila Fernández",
+        "Alejandro Vargas",
+        "Fernanda Castro",
+        "Ricardo Mendoza",
+        "Isabela Navarro",
+        "Mateo Salazar",
+        "Daniela Paredes",
+        "Santiago Ortega",
+        "Lorena Guzmán",
+        "Diego Armando Pérez",
+        "Ana María Chávez",
+        "Emiliano Rodríguez"
+        ];
+
+        const nombreAleatorio = nombresLatinos[Math.floor(Math.random() * nombresLatinos.length)];
+
+
+        // let username = prompt();
+        let username = nombreAleatorio
+
+        const Socket = io() ; 
+
+
+        Socket.emit("join" ,username);
+
+
+        Socket.on("msg",(data)=>{
+            const container = document.getElementById("messages_container");
+            const newElement = document.createElement("p");
+            newElement.textContent = data.user + " : " + data.data ; 
+
+            if (data.user == username){
+                newElement.classList.add("messages_container_user") ;
+            }else{
+                newElement.classList.add("messages_container_otherUser") ;
+            }
+
+            container.appendChild(newElement);
+        });
+
+
+        function getData(){
+            const text = document.getElementById("input_data").value;
+            Socket.emit("get_msg" , text) ;
+            document.getElementById("input_data").value = "";
+
+        }
+    </script>
+    
+</body>
+</html>

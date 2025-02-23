@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat en Tiempo Real</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chat { width: 50%; margin: auto; border: 1px solid #ccc; padding: 10px; }
+        #messages { height: 300px; overflow-y: auto; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        #typing { color: gray; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Chat en Tiempo Real</h1>
+    <div id="chat">
+        <div id="messages"></div>
+        <p id="typing"></p>
+        <input id="msg" type="text" placeholder="Escribe un mensaje..." oninput="sendTyping()" onblur="stopTyping()">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+
+    <script>
+        const socket = io();
+        let username = prompt("Ingresa tu nombre:");
+
+        // Unirse al chat
+        socket.emit("joinChat", username);
+
+        // Recibir mensajes
+        socket.on("message", (data) => {
+            const messages = document.getElementById("messages");
+            const msgElement = document.createElement("p");
+            msgElement.innerHTML = `<strong>${data.user}:</strong> ${data.text}`;
+            messages.appendChild(msgElement);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        // Notificar cuando alguien está escribiendo
+        socket.on("typing", (user) => {
+            document.getElementById("typing").textContent = `${user} está escribiendo...`;
+        });
+
+        socket.on("stopTyping", () => {
+            document.getElementById("typing").textContent = "";
+        });
+
+        function sendMessage() {
+            const msgInput = document.getElementById("msg");
+            if (msgInput.value.trim() !== "") {
+                socket.emit("chatMessage", msgInput.value);
+                msgInput.value = "";
+                stopTyping();
+            }
+        }
+
+        function sendTyping() {
+            socket.emit("typing");
+        }
+
+        function stopTyping() {
+            socket.emit("stopTyping");
+        }
+    </script>
+</body>
+</html>
