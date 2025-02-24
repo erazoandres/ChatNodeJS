@@ -62,12 +62,14 @@
         Socket.on("msg",(data)=>{
             const container = document.getElementById("messages_container");
             const newElement = document.createElement("p");
-            newElement.textContent = data.user + " : " + data.data ; 
-
+            
             if (data.user == username){
                 newElement.classList.add("messages_container_user") ;
+                newElement.textContent = data.user + " : " + data.data ; 
             }else{
                 newElement.classList.add("messages_container_otherUser") ;
+                newElement.textContent = data.user + " : " + data.data ; 
+
             }
 
             container.appendChild(newElement);
