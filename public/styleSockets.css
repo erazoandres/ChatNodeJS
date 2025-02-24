@@ -1,6 +1,9 @@
 body{
     display: flex;
     justify-content: center;
+    background-image: url("https://picsum.photos/1920/1080");
+    background-position: center;
+    background-size: cover;
 }
 
 #chat_container{
@@ -8,23 +11,25 @@ body{
     height: 90vh;
     padding: 10px;
     margin: 10px;
-    background-color: antiquewhite;
 
 }
 
 #messages_container{
     height: 80%;
-    width: 90%;
+    width: 100%;
     background-color:aliceblue;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+
+    opacity: .9;
 
 }
 
 #messages_container p{
     padding: 15px;
     font-family: cursive;
+    margin:14px 10px;
 
 }
 
