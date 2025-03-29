@@ -54,29 +54,35 @@
         let username = nombreAleatorio
 
         const Socket = io() ; 
-
-
         Socket.emit("join" ,username);
 
 
         Socket.on("msg",(data)=>{
             const container = document.getElementById("messages_container");
             const newElement = document.createElement("p");
-            newElement.textContent = data.user + " : " + data.data ; 
 
-            if (data.user == username){
+            console.log(data.username)
+            
+            if (data.user !== "BOT"){
                 newElement.classList.add("messages_container_user") ;
+                newElement.textContent = data.user + " : " + data.data ; 
+                container.appendChild(newElement);
+                container.scrollTop = container.scrollHeight; // Auto-scroll
+                console.log(data.user)
+                
             }else{
                 newElement.classList.add("messages_container_otherUser") ;
+                newElement.textContent = data.user + " : " + data.data ; 
+                container.appendChild(newElement);
+                container.scrollTop = container.scrollHeight; // Auto-scroll
+                console.log(data.user)
             }
-
-            container.appendChild(newElement);
         });
 
 
         function getData(){
             const text = document.getElementById("input_data").value;
-            Socket.emit("get_msg" , text) ;
+            Socket.emit("get_msg_user" , text) ;
             document.getElementById("input_data").value = "";
 
         }
